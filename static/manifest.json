@@ -1,0 +1,21 @@
+{
+    "short_name": "永康火燒雲",
+    "name": "台南永康火燒雲預報",
+    "icons": [
+        {
+            "src": "https://img.icons8.com/color/192/sunset--v1.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "https://img.icons8.com/color/512/sunset--v1.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#ff4b4b"
+}

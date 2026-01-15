@@ -1,0 +1,18 @@
+/* 隱藏 Streamlit 預設的漢堡選單與頁尾 */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* 調整手機版面的邊距 */
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+}
+
+/* 美化指標卡片 */
+div[data-testid="stMetric"] {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #eee;
+}
