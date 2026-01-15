@@ -53,7 +53,7 @@ def calculate_burn_probability(weather_data, pm25, target_hour):
         times = weather_data['hourly']['time']
         target_idx = 0
         for i, t in enumerate(times):
-            if f"T{target_hour}:" in t:
+            if f"T{target_hour:02d}:" in t: # 確保格式對齊 (如 T17:)
                 target_idx = i
                 break
         
@@ -92,20 +92,18 @@ col1, col2 = st.columns([1, 2])
 with col1:
     st.write("觀測點：台南市永康區 (暫時關閉自動定位)")
 with col2:
-    # loc = streamlit_geolocation() <-- 暫時註解掉
-    # 手動指定永康座標，繞過定位套件錯誤
+    # 手動指定永康座標
     loc = {'latitude': 23.02, 'longitude': 120.22}
 
 lat, lon = 23.02, 120.22
-if loc and loc.get('latitude'):
-    lat = loc['latitude']
-    lon = loc['longitude']
 
 with st.spinner('正在分析大氣資料...'):
     weather_data, pm25 = get_data(lat, lon)
 
-if weather_data:
-    sunset_str = weather_data['daily']['sunset']
+if weather_data and 'daily' in weather_data:
+    # --- 修正點在此：加上  ---
+    sunset_str = weather_data['daily']['sunset'] 
+    
     sunset_dt = datetime.fromisoformat(sunset_str)
     sunset_time = sunset_dt.strftime("%H:%M")
     sunset_hour = sunset_dt.hour
@@ -123,10 +121,10 @@ if weather_data:
 
     st.markdown("### 📊 詳細參數")
     c1, c2, c3 = st.columns(3)
-    c1.metric("高空卷雲", f"{details.get('high')}%")
-    c2.metric("低空雲量", f"{details.get('low')}%")
-    c3.metric("PM2.5", f"{details.get('pm2.5')}")
+    c1.metric("高空卷雲", f"{details.get('high', 0)}%")
+    c2.metric("低空雲量", f"{details.get('low', 0)}%")
+    c3.metric("PM2.5", f"{details.get('pm2.5', 0)}")
     
     st.map(pd.DataFrame({'lat': [lat], 'lon': [lon]}))
 else:
-    st.error("無法連線氣象伺服器")
+    st.error("無法連線氣象伺服器，請稍後再試。")
