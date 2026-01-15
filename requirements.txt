@@ -1,1 +1,1 @@
-streamlit requests pandas numpy streamlit-geolocation plotly
+streamlit requests pandas numpy streamlit-geolocation
