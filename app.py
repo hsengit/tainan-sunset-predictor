@@ -101,9 +101,9 @@ with st.spinner('正在分析大氣資料...'):
     weather_data, pm25 = get_data(lat, lon)
 
 if weather_data and 'daily' in weather_data:
-    # --- 修正點在此：加上  ---
-     
+    # --- 修正點：加上  取出清單中的第一筆資料 ---
     sunset_str = weather_data['daily']['sunset']
+    
     sunset_dt = datetime.fromisoformat(sunset_str)
     sunset_time = sunset_dt.strftime("%H:%M")
     sunset_hour = sunset_dt.hour
