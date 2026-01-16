@@ -145,7 +145,7 @@ if weather_data and 'daily' in weather_data:
         default=["📍 現在位置", "🔥 高雲分布", "☀️ 日落方位線"]
     )
 
-    deck_layers =  # <--- 這裡修正了！加上了
+    deck_layers =' ' # <--- 這裡修正了！加上了
 
     # 1. 太陽方位線
     if "☀️ 日落方位線" in layers_selected:
@@ -199,4 +199,5 @@ if weather_data and 'daily' in weather_data:
     st.pydeck_chart(pdk.Deck(layers=deck_layers, initial_view_state=view_state))
 
 else:
+
     st.error("無法連線氣象伺服器，請稍後再試。")
