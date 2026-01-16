@@ -1,3 +1,5 @@
+import math
+import pydeck as pdk
 import streamlit as st
 import requests
 import pandas as pd
@@ -24,7 +26,7 @@ def get_data(lat, lon):
         weather_params = {
             "latitude": lat,
             "longitude": lon,
-            "hourly": "cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,relative_humidity_2m",
+            "hourly": "cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,relative_humidity_2m,sun_azimuth",
             "daily": "sunset",
             "timezone": "Asia/Taipei",
             "forecast_days": 1
@@ -135,8 +137,105 @@ if weather_data and 'daily' in weather_data:
     c1.metric("高空卷雲", f"{details.get('high', 0)}%")
     c2.metric("低空雲量", f"{details.get('low', 0)}%")
     c3.metric("PM2.5", f"{details.get('pm2.5', 0)}")
+        
+#... (前面的程式碼保持不變)...
+
+    # ==========================================
+    #  新的互動式地圖模組 (取代原本的 st.map)
+    # ==========================================
+    st.markdown("### 🗺️ 火燒雲觀測地圖")
     
-    st.map(pd.DataFrame({'lat': [lat], 'lon': [lon]}))
+    # 1. 建立圖層選擇器 (複選框)
+    layers_selected = st.multiselect(
+        "選擇顯示圖層：",
+        ["📍 現在位置", "☁️ 低雲分布", "🌥️ 中雲分布", "🔥 高雲分布 (關鍵)", "☀️ 日落方位線"],
+        default=["📍 現在位置", "🔥 高雲分布 (關鍵)", "☀️ 日落方位線"]
+    )
+
+    # 準備繪圖資料
+    # 我們用圓形的半徑大小或透明度來代表雲量多少
+    # 為了讓地圖好看，我們設定一個基礎半徑 (公尺)
+    base_radius = 2000 
+    
+    deck_layers =
+
+    # --- 圖層 1: 太陽方位線 (Sun Azimuth Line) ---
+    if "☀️ 日落方位線" in layers_selected:
+        # 取得日落時的太陽方位角
+        azimuth = weather_data['hourly']['sun_azimuth'][target_hour_idx]
+        
+        # 利用三角函數計算延伸線的終點 (長度約 50 公里)
+        line_len_km = 0.5  # 約 50km 的經緯度差
+        angle_rad = math.radians(azimuth)
+        end_lon = lon + line_len_km * math.sin(angle_rad)
+        end_lat = lat + line_len_km * math.cos(angle_rad)
+
+        line_data = [{"start": [lon, lat], "end": [end_lon, end_lat], "name": "Sunset Direction"}]
+        
+        layer_sun = pdk.Layer(
+            "LineLayer",
+            line_data,
+            get_source_position="start",
+            get_target_position="end",
+            get_color=,  # 金黃色
+            get_width=5,
+            pickable=True,
+        )
+        deck_layers.append(layer_sun)
+
+    # --- 圖層 2, 3, 4: 雲層 (Low, Mid, High) ---
+    # 定義雲層的顏色與數據
+    cloud_configs = {
+        "☁️ 低雲分布": {"val": details.get('low', 0), "color": , "radius": 3000},   # 灰色
+        "🌥️ 中雲分布": {"val": details.get('mid', 0), "color": , "radius": 2000},   # 橘色
+        "🔥 高雲分布 (關鍵)": {"val": details.get('high', 0), "color": , "radius": 1000} # 紅色
+    }
+
+    for layer_name, config in cloud_configs.items():
+        if layer_name in layers_selected:
+            # 透明度依據雲量決定 (0-255)
+            opacity = int((config["val"] / 100) * 200) + 50 
+            
+            layer_cloud = pdk.Layer(
+                "ScatterplotLayer",
+                data=[{"position": [lon, lat], "name": layer_name}],
+                get_position="position",
+                get_color=config["color"] + [opacity], # 加上透明度
+                get_radius=config["radius"],
+                pickable=True,
+                stroked=True,
+                filled=True,
+                line_width_min_pixels=1,
+            )
+            deck_layers.append(layer_cloud)
+
+    # --- 圖層 5: 現在位置 (User Location) ---
+    if "📍 現在位置" in layers_selected:
+        layer_user = pdk.Layer(
+            "ScatterplotLayer",
+            data=[{"position": [lon, lat], "name": "You are here"}],
+            get_position="position",
+            get_color=, # 藍色
+            get_radius=200,               # 小圓點
+            pickable=True,
+        )
+        deck_layers.append(layer_user)
+
+    # 繪製地圖
+    view_state = pdk.ViewState(
+        latitude=lat,
+        longitude=lon,
+        zoom=11,
+        pitch=0,
+    )
+
+    st.pydeck_chart(pdk.Deck(
+        layers=deck_layers,
+        initial_view_state=view_state,
+        tooltip={"text": "{name}"}
+    ))
+
 else:
 
     st.error("無法連線氣象伺服器，請稍後再試。")
+
