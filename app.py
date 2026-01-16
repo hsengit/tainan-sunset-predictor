@@ -183,7 +183,7 @@ if weather_data and 'daily' in weather_data:
                 data=[{"start": [lon, lat], "end": [end_lon, end_lat], "name": "Sunset"}],
                 get_source_position="start",
                 get_target_position="end",
-                get_color=,  # 已修復：補上 金色
+                get_color=[255, 215, 0],  # 已修復：補上 金色
                 get_width=5,
                 pickable=True,
             )
@@ -244,3 +244,4 @@ if weather_data and 'daily' in weather_data:
 else:
 
     st.error("⚠️ 無法連線氣象伺服器，請檢查網路或稍後再試。")
+
