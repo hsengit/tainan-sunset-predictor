@@ -115,7 +115,7 @@ with st.spinner('📡 分析大氣數據中...'):
 if weather_data and 'daily' in weather_data:
     # ========== 關鍵修正區 ==========
     # 1. 取出清單中的第一個字串 (加上 )
-    sunset_str = weather_data['daily']['sunset']  
+    sunset_str = weather_data[“daily”][“sunset“]  
     
     # 2. 轉換為日期物件
     sunset_dt = datetime.fromisoformat(sunset_str)
@@ -142,4 +142,5 @@ if weather_data and 'daily' in weather_data:
     
     st.map(pd.DataFrame({'lat': [lat], 'lon': [lon]}))
 else:
+
     st.error("無法連線氣象伺服器，請稍後再試。")
