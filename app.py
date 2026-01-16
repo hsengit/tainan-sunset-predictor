@@ -195,7 +195,7 @@ if weather_data and 'daily' in weather_data:
     cloud_cfgs = {
         "☁️ 低雲分布": {"val": details.get('low', 0), "col": [128, 128, 128], "r": 3000}, # 灰色
         "🌥️ 中雲分布": {"val": details.get('mid', 0), "col": [255, 128, 0] ,   "r": 2000}, # 橘色
-        "🔥 高雲分布": {"val": details.get('high', 0), "col": ,    "r": 1000}  # 紅色
+        "🔥 高雲分布": {"val": details.get('high', 0), "col":[255,0,0] ,    "r": 1000}  # 紅色
     }
     
     for layer_name, config in cloud_cfgs.items():
@@ -221,7 +221,7 @@ if weather_data and 'daily' in weather_data:
             "ScatterplotLayer",
             data=[{"position": [lon, lat], "name": "You are here"}],
             get_position="position",
-            get_color=, # 已修復：補上藍色
+            get_color= [0, 0, 255], # 已修復：補上藍色
             get_radius=200,
             pickable=True,
         )
@@ -244,5 +244,6 @@ if weather_data and 'daily' in weather_data:
 else:
 
     st.error("⚠️ 無法連線氣象伺服器，請檢查網路或稍後再試。")
+
 
 
