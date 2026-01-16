@@ -161,7 +161,7 @@ if weather_data and 'daily' in weather_data:
     )
 
     # 1. 初始化圖層清單 (已修復：補上中括號)
-    deck_layers =
+    deck_layers = ' '
 
     # 2. 太陽方位線圖層
     if "☀️ 日落方位線" in layers_selected:
@@ -242,4 +242,5 @@ if weather_data and 'daily' in weather_data:
     ))
 
 else:
+
     st.error("⚠️ 無法連線氣象伺服器，請檢查網路或稍後再試。")
